@@ -77,3 +77,38 @@ public class Question1 {
 解释：在这种情况下, 交易无法获得正利润，所以不参与交易可以获得最大利润，最大利润为 0 。
 ```
 
+
+### 解法思路
+
+```
+股票在当天交易完之后只有两种情况
+1. 没有股票
+2. 有股票
+
+会导致没有股票的情况是
+1. 昨天本来就没有股票的情况下，继续不买股票，而这时候的利润是昨天没有买股票的时候的利润
+2. 昨天在有股票的情况下，将股票卖出，而这时候的利润是昨天有股票的时候的利润，再加上今天卖出得到的利润
+
+会导致有股票的情况是
+1. 昨天本来就有股票，并且今天进行交易的时候不卖出，而这时候的利润是昨天有股票的时候的利润
+2. 昨天在没有股票的情况下，买入股票，而这时候的利润是昨天没有股票的时候的利润，再减去今天买入股票花费的资金的利润
+
+```
+
+```java
+public class Question2 {
+
+    public int maxProfit2(int[] prices) {
+        int[][] twoArray = new int[prices.length][2];
+        twoArray[0][0] = 0;
+        twoArray[0][1] = -prices[0];
+        for (int i = 1; i < prices.length; i++) {
+            twoArray[i][0] = Math.max(twoArray[i - 1][0], twoArray[i - 1][1] + prices[i]);
+            twoArray[i][1] = Math.max(twoArray[i - 1][1], twoArray[i - 1][0] - prices[i]);
+        }
+        return Math.max(twoArray[prices.length - 1][0], twoArray[prices.length - 1][1]);
+    }
+
+}
+```
+
