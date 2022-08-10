@@ -233,8 +233,8 @@ class Question4{
 }
 ```
 
+## 只出现一次的数字
 
-只出现一次的数字
 给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
 
 说明：
@@ -271,4 +271,172 @@ class Questions5{
         return single;
     }
 }
+```
+
+## 两个数组的交集 II
+
+给你两个整数数组 nums1 和 nums2 ，请你以数组形式返回两数组的交集。返回结果中每个元素出现的次数，应与元素在两个数组中都出现的次数一致（如果出现次数不一致，则考虑取较小值）。可以不考虑输出结果的顺序。
+
+ 
+
+示例 1：
+
+输入：nums1 = [1,2,2,1], nums2 = [2,2]
+输出：[2,2]
+示例 2:
+
+输入：nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+输出：[4,9]
+
+
+
+解决思路
+
+1. 哈希表法
++ 首先遍历长度较小的数组，将数字和数字出现的次数存储其中
++ 最后遍历长度大的数组，如果遇到含有相同的数字，哈希表中对应的数字需要减去1，并将数字存入结果数组中
+
+```java
+package com.wujingjun.Array;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Question6 {
+
+    public int[] intersect(int[] nums1, int[] nums2) {
+        if (nums1.length < nums2.length){
+            this.intersect(nums2,nums1);
+        }
+        ArrayList<Integer> res = new ArrayList<>();
+
+        Map<Integer,Integer> map = new HashMap<>();
+        for (int i : nums1) {
+            this.put(map,i);
+        }
+
+        for (int i : nums2) {
+            this.compare(map,i,res);
+        }
+
+        return res.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    public void put(Map<Integer,Integer> map,Integer key){
+        if (map.containsKey(key)){
+            map.put(key,map.get(key)+1);
+            return;
+        }
+        map.put(key,1);
+    }
+
+    public void compare(Map<Integer,Integer> map, Integer key, List<Integer> res){
+        if (map.containsKey(key) && !map.get(key).equals(0)) {
+            res.add(key);
+            map.put(key,map.get(key)-1);
+        }
+    }
+
+}
+
+```
+
+2. 使用双指针+排序
+
+如果两个数组是有序的，则可以使用双指针的方法得到两个数组的交集。
+
+首先对两个数组进行排序，然后使用两个指针遍历两个数组。
+
+初始时，两个指针分别指向两个数组的头部。每次比较两个指针指向的两个数组中的数字，如果两个数字不相等，则将指向较小数字的指针右移一位，如果两个数字相等，将该数字添加到答案，并将两个指针都右移一位。当至少有一个指针超出数组范围时，遍历结束。
+
+```java
+public int[] intersectWay2(int[] nums1, int[] nums2) {
+    Arrays.sort(nums1);
+    Arrays.sort(nums2);
+
+    List<Integer> res = new ArrayList<>();
+    int index1 = 0, index2 = 0;
+    while (index1 < nums1.length && index2 < nums2.length) {
+        if (nums1[index1] == nums2[index2]) {
+            res.add(nums1[index1]);
+            index1++;
+            index2++;
+        } else if (nums1[index1] > nums2[index2]) {
+            index2++;
+        } else if (nums1[index1] < nums2[index2]) {
+            index1++;
+        }
+    }
+    return res.stream().mapToInt(Integer::intValue).toArray();
+}
+```
+
+## 加一
+给定一个由 整数 组成的 非空 数组所表示的非负整数，在该数的基础上加一。
+
+最高位数字存放在数组的首位， 数组中每个元素只存储单个数字。
+
+你可以假设除了整数 0 之外，这个整数不会以零开头。
+
+ 
+
+示例 1：
+
+输入：digits = [1,2,3]
+输出：[1,2,4]
+解释：输入数组表示数字 123。
+示例 2：
+
+输入：digits = [4,3,2,1]
+输出：[4,3,2,2]
+解释：输入数组表示数字 4321。
+示例 3：
+
+输入：digits = [0]
+输出：[1]
+
+解决思路
+需要考虑是增加因子的问题，判断增加因子是0还是1即可
+
+```java
+package com.wujingjun.Array;
+
+public class Question7 {
+
+    public static void main(String[] args) {
+        int[] test = {9,9,9};
+        Question7 question7 = new Question7();
+        int[] ints = question7.plusOne(test);
+        System.out.println("hello");
+    }
+
+    public int[] plusOne(int[] digits) {
+        int length = digits.length;
+        int index = length - 1;
+        int increase = 1;
+
+        while (index >= 0 && increase > 0) {
+            int digit = digits[index];
+            digit+=increase;
+            increase = 0;
+            if (digit == 10) {
+                increase++;
+                digits[index] = 0;
+            } else {
+                digits[index] = digit;
+                break;
+            }
+            index --;
+        }
+
+        if (increase > 0) {
+            int[] des = new int[length + 1];
+            System.arraycopy(digits, 0, des, 1, length);
+            des[0] = 1;
+            return des;
+        }
+        return digits;
+    }
+}
+
 ```
